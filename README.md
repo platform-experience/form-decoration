@@ -14,7 +14,11 @@ This application is designed to easily allow you to style, and add custom functi
 
 ## Installation
 
-To use this application, simply navigate to `System Applications` > `Studio` on your instance. In the dialog that opens, select `Import From Source Control` and point it at this repository.
+To use this application, simply navigate to `System Applications` > `Studio` on your instance. In the dialog that opens, select `Import From Source Control` and point it at the following repository:
+
+```
+https://github.com/platform-experience/form-decoration-app
+```
 
 ## Usage
 TODO: explain how to use the app.

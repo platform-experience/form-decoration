@@ -1,0 +1,3 @@
+[submodule "form-decoration-app"]
+	path = form-decoration-app
+	url = https://github.com/platform-experience/form-decoration-app.git

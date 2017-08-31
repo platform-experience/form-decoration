@@ -2,6 +2,8 @@
 
 This application is designed to easily allow you to style, and add custom functionality to form fields, whilst retaining the power of the out-of-box form widget.
 
+**NOTE:** this repository contains documentation only. The repo containing the applicaton can be found at [platform-experience/form-decoration-app](https://github.com/platform-experience/form-decoration-app).
+
 ## Background
 
 The out-of-box form widget in Service Portal is extremely powerful, in that it leverages base-platform functionality so that forms can be designed by configuration rather than code. Examples of this functionality are as follows:
@@ -19,7 +21,7 @@ It also has it's limitations as well. Specifically, there is no way out-of-box t
 To use this application, simply navigate to `System Applications` > `Studio` on your instance. In the dialog that opens, select `Import From Source Control` and point it at the following repository:
 
 ```
-https://github.com/platform-experience/form-decoration-app
+https://github.com/platform-experience/form-decoration-app.git
 ```
 
 ## Usage

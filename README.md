@@ -2,6 +2,8 @@
 
 This application is designed to easily allow you to style, and add custom functionality to form fields, whilst retaining the power of the out-of-box form widget.
 
+![Decorated Form](decorated-form.png)
+
 **NOTE:** this repository contains documentation only. The repo containing the applicaton can be found at [platform-experience/form-decoration-app](https://github.com/platform-experience/form-decoration-app).
 
 ## Background

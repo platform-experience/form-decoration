@@ -97,12 +97,12 @@ No roles are required to be able to view the form widget or the custom fields.
 
 ## Configuration
 
-- [Styling](/blob/master/README.md)
+- [Styling](blob/master/README.md)
 
 ## Example Directives
 Below you can see some examples from the fields that come with the application if you install demo data.
 
-- [fdExampleStringField](/blob/master/examples/fdExampleStringField)
+- [fdExampleStringField](blob/master/examples/fdExampleStringField)
 
 ## Get assistance
 

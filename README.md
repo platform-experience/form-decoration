@@ -6,9 +6,9 @@ This application is designed to easily allow you to style, and add custom functi
 
 **NOTE:** this repository contains documentation only. The repo containing the applicaton can be found at [platform-experience/form-decoration-app](https://github.com/platform-experience/form-decoration-app).
 
-## Background
+## Why?
 
-The out-of-box form widget in Service Portal is extremely powerful, in that it leverages base-platform functionality so that forms can be designed by configuration rather than code. Examples of this functionality are as follows:
+The out-of-box form widget in Service Portal is extremely powerful, in that it leverages base-platform functionality (examples below) so that forms can be designed by configuration rather than code.
 
 - Form views
 - Dictionary 
@@ -27,19 +27,7 @@ https://github.com/platform-experience/form-decoration-app.git
 ```
 **NOTE:** Executing **Apply Remote Changes** from the **Source Control** menu of ServiceNow Studio will uninstall and reinstall the application, dropping all the tables and thus wiping your configuration data, thus it is suggested not to do this. It is aimed for this application to be published to the ServiceNow Store eventually, which will allow you to receive updates to the app without wiping your data.
 ## Getting Started
-There are two primary widgets included in this application, which are self-describing:
-
-1. Decorated Form
-2. Decorated Record Producer
-
-These widgets must be used for the form decoration functionality to work. For instructions on how to add these to a Service Portal page, refer to the [ServiceNow Documentation website](https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/build/service-portal/task/t_AddWidgetsToAPage.html).
-
-There are an additional two widgets to assist with creating new directives, allowing you to inspect the properties of all the fields/variables on the page to ensure your widget is reacting appropriately:
-
-1. Decorated Form (debug)
-2. Decorated Record Producer (debug)
-
-### Decorated Form
+There is a single widget included in this application called **Decorated Form** (`pe-decorated-form`). This widget must be used for the form decoration functionality to work. For instructions on how to add it to a Service Portal page, refer to the [ServiceNow Documentation website](https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/build/service-portal/task/t_AddWidgetsToAPage.html).
 
 This widget works similar to the out-of-box form widget, and can be controlled with the following options/parameters:
 
@@ -52,81 +40,47 @@ This widget works similar to the out-of-box form widget, and can be controlled w
 
 In cases above where a URL parameter can be supplied, supplying an option will override a URL parameter if supplied.
 
+The application comes with a Service Portal Page called `df_test` with the widget already on it. If you open the below URL on your instance you can see it in action.
+
+```
+/sp?id=df_test&table=incident
+```
+
 ## Usage
-To create your own custom directive, and use that for a specific field/variable, follow the instruction below:
+To create your own field type, simply follow the instructions below.
 
-### 1 - Create an Angular directive
-Create a new UI Script and add your directive in it, ensuring it is added to the `formDec` Angular module. For example:
-
-```
-angular.module('formDec').directive('myDirectiveName', function () {
-	'use strict';
-	
-	var template = 'YOUR-HTML-TEMPLATE';
-	
-	var link = function (scope, elem, attrs, ctrl) {
-	
-		scope.inputField = elem.find('input');
-		scope.inputField.on('focus', scope.focusHandler).on('blur', scope.blurHandler);
-		
-		$timeout(function () {
-			scope.$emit("sp.spFormField.rendered", elem, scope.inputField);
-		});
-	}
-	
-	return {
-		template: template,
-		link: link,
-		controller: 'fdFieldCtrl',
-		require: ['^spModel', '^fdFormField']
-	};
-});
-```
-
-You can add as many directives into this UI Script as you like.
-
-Some key points to be aware of when creating your directive:
-
-- Your directive must use the `fdFieldCtrl` controller, which includes a few helper functions that you will need to call in your link function.
-- Your directive will have access to a number of scope variables which will automatically update when the field/form changes (e.g. as a result of UI Policy or Client Script).
-	- `field`
-		- `name`
-		- `directive`
-		- `value`
-		- `stagedValue`
-		- `isReadOnly()`
-		- `isMandatory()`
-		- `max_length`
-		- `visible`
-		- `choices`
-	- `formModel`:
-- Be careful when using [one-time bindings](https://toddmotto.com/angular-one-time-binding-syntax/), as if the field/form changes as a result of UI Policy/Client Script you want these updates to reflect on your field.
-- The value of your field should in most cases be bound to the `field.stagedValue` scope variable.
-- When the user focuses on the field, you should call the function `focusHandler()`.
-- When the user is no longer interacting with the field, you must call the scope function `blurHandler()`. This will do a few things, and importantly will copy the value from the `field.stagedValue` into `field.value` (`field.value` is what gets sent to the server on submit).
-
-
-To see an example of the above, please refer to the UI Script included in the application `x_snc_formdec.exampleDirectives`. This includes 4 directives covering different types of fields.
-
-Once you've created your UI Script, create an entry in the `sp_js_include` table which points to it, and then create a record in the `m2m_sp_dependency_js_include` table linking the JS Include you created to the **Form Decoration** Widget Dependency.
-
-### 2 - Declare the directive's existence
-
-Once you've created the actual Angular directive, you need to define it in ServiceNow within the **Directives** table (`x_snc_formdec_directives`).
+### 1 - Create a Directive record
+Create a new record in the **Directive** table (`x_snc_formDec_directive`).
 
 | Field  | Description |
 | ------------- | ------------- |
 | Name (camel-case)  | The name of the directive in camel-case.  |
 | Screenshot  | An example screenshot of the directive.  |
 | Description  | A description of the directive, explaining functionality and anything that can't be conveyed in the screenshot.  |
+| Template  | HTML template of the field |
+| Link function  | Link function of the field |
+| Controller function  | Angular controller of the field |
+| CSS  | CSS to style the field (not SASS compatible) |
 
-**NOTE:** There are an additional two fields on the table which are read only: `spinal_case` and `snake_case`. These fields will be auto-populated based on the value entered in the **Name (camel-case)** field.
+**NOTE:** 
+
+- There are an additional two fields on the table which are read only: `spinal_case` and `snake_case`. These fields will be auto-populated based on the value entered in the **Name (camel-case)** field.
+- CSS will be parsed and scoped so it won't conflict with other fields, and the result of this parsing will be stored in the **CSS (parsed)** field (`css_parsed`).
+
+When creating your directive, you need to ensure it interacts with the form correctly so that when the form is submitted, the correct value gets sent to the server.
+
+- The value of your field should in most cases be bound to the `field.stagedValue` scope variable.
+- - When the user focuses on the field, you should emit the Angular event `sp.spFormField.focus`.
+- When the user is no longer interacting with the field, you should emit the Angular event `sp.spFormField.blur` and pass the stagedValue into the FieldValue scope function (e.g. `$scope.fieldValue($scope.field.stagedValue);`
+
+**NOTE:**  be careful when using [one-time bindings](https://toddmotto.com/angular-one-time-binding-syntax/), as if the field/form changes as a result of UI Policy/Client Script you want these updates to reflect on your field.
 
 ### 3 - Define the directive to field/variable relationship
-You must define a relationship between the directive you created and the form field/variable. Doing this will mean that when the field/variable is shown on the form, the directive will be used to display it instead of the out-of-box way of representing it. 
+You must define a relationship between the directive you created and the form field/variable. Doing this will mean that when the field/variable is shown on the form, the directive will be used to display it instead of the out-of-box way of representing it.
 
-You can define the relationship using the **Decorators** table (`x_snc_formdec_decorators`).
+If a field does not have this association, the out-of-box method of representing the field will be used.
 
+You can define the relationship using the **Decorators** table (`x_snc_formdec_decorator`).
 
 | Field  | Description |
 | ------------- | ------------- |
@@ -135,7 +89,18 @@ You can define the relationship using the **Decorators** table (`x_snc_formdec_d
 | Field  | The field for which the directive should be used. |
 | Variable  | The variable for which the directive should be used. |
 
-**NOTE:** you can link a single **Decorator** record to both a field AND variable if desired, however it's probably better to have a Decorator record for each.
+You can link a single **Decorator** record to both a field AND variable if desired.
+## Security
+The application has 4 roles which can be granted to users to allow them to configure the application.
+
+| Role  | Description | Contains roles |
+| ------------- | ------------- | ------------- |
+| `x_snc_formDec.admin`  | Administrative access | `x_snc_formDec.developer` `x_snc_formDec.manager ` |
+| `x_snc_formDec.developer`  | Can manage directive records | `x_snc_formDec.user` |
+| `x_snc_formDec.manager`  | Can manage decorator records | `x_snc_formDec.user` |
+| `x_snc_formDec.user`  |  | |
+
+No roles are required to be able to view the form widget or the custom fields.
 
 ## Configuration
 
@@ -165,6 +130,58 @@ The following SASS variables can be set to control the styling of the form itsel
 | `$fd-uia-primary-background-hover` | Background of the primary UI Action when hovered | `#fd3056` |
 | `$fd-uia-primary-border-hover` | Border of the primary UI Action when hovered | `#da1a40` |
 | `$fd-uia-primary-color-hover` | Color of the primary UI Action when hovered | `#fff` |
+
+## Example Directives
+Below you can see some examples from the fields that come with the application if you install demo data.
+
+### `fdExampleStringField`
+
+#### Template
+```html
+<div class="fd-ex-string"
+     ng-class="{'fd-ex-mandatory': field.mandatory}"
+     ng-show="field.visible">
+  <label class="fd-ex-label"
+         for="{{::field.name}}">{{::field.label}}</label>
+  <input type="text"
+         name="{{::field.name}}"
+         ng-model="field.stagedValue"
+         ng-focus="focus()"
+         ng-blur="blur()" />
+</div>
+```
+#### Controller function
+```javascript
+function fdExampleStringFieldCtrl ($scope, $timeout, $element) {
+	
+	$scope.focus = function () {
+		$scope.hasFocus = true;
+		$scope.$emit("sp.spFormField.focus", $element, $scope.inputField);
+	};
+	
+	$scope.blur = function () {
+		$scope.hasFocus = false;
+		$scope.fieldValue($scope.field.stagedValue);
+		$scope.$emit("sp.spFormField.blur", $element, $scope.inputField);
+	};
+	
+	$timeout(function () {
+		$scope.$emit("sp.spFormField.rendered", $element, $scope.inputField);
+	});
+
+}
+```
+#### CSS
+```css
+.fd-ex-string input {
+  box-sizing: border-box;
+  border: 4px solid #C4D0D6;
+  border-radius: 4px;
+  background-color: #F9FDFF;
+  padding: 5px 15px;
+  width: 100%;
+}
+```
 
 ## Get assistance
 

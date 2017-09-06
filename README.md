@@ -97,84 +97,12 @@ No roles are required to be able to view the form widget or the custom fields.
 
 ## Configuration
 
-### Styling
-The following SASS variables can be set to control the styling of the form itself.
-
-| Variable  | Effect | Default |
-| ------------- | ------------- | ------------- |
-| `$fd-ff-margin`  | Margin between each form field| `10px 10px 10px 10px` |
-| `$fd-ui-actions-margin` | Margin surrounding the UI Actions | `30px 0px` |
-| `$fd-ui-actions-text-align` | Text-alignment of the UI Actions | `center` |
-| `$fd-uia-margin` | Margin between individual UI Actions | `10px` |
-| `$fd-uia-border-radius` | Border radius of the UI Actions | `8px` |
-| `$fd-uia-border` | Border of the UI Actions | `3px solid #C4D0D6` |
-| `$fd-uia-background` | Background of the UI Actions | `#fff` |
-| `$fd-uia-padding` | Padding of the UI Actions | `5px 20px` |
-| `$fd-uia-color` | Color of the UI Actions | `#000` |
-| `$fd-uia-min-height` | Minimum height of the UI Actions | `40px` |
-| `$fd-uia-min-width` | Minimum width of the UI Actions | `40px` |
-| `$fd-uia-font-size` | Font size of the UI Actions | `18px` |
-| `$fd-uia-background-hover` | Background of UI Action when hovered | `#F9FDFF` |
-| `$fd-uia-background-border` | Border of UI Action when hovered | `#F9FDFF` |
-| `$fd-uia-background-color` | Color of UI Action when hovered | `#F9FDFF` |
-| `$fd-uia-primary-background` | Background of the primary UI Action | `#da1a40` |
-| `$fd-uia-primary-border` | Border of the primary UI Action | `#da1a40` |
-| `$fd-uia-primary-color` | Color of the primary UI Action | `#fff` |
-| `$fd-uia-primary-background-hover` | Background of the primary UI Action when hovered | `#fd3056` |
-| `$fd-uia-primary-border-hover` | Border of the primary UI Action when hovered | `#da1a40` |
-| `$fd-uia-primary-color-hover` | Color of the primary UI Action when hovered | `#fff` |
+- [Styling](/blob/master/README.md)
 
 ## Example Directives
 Below you can see some examples from the fields that come with the application if you install demo data.
 
-### `fdExampleStringField`
-
-#### Template
-```html
-<div class="fd-ex-string"
-     ng-class="{'fd-ex-mandatory': field.mandatory}"
-     ng-show="field.visible">
-  <label class="fd-ex-label"
-         for="{{::field.name}}">{{::field.label}}</label>
-  <input type="text"
-         name="{{::field.name}}"
-         ng-model="field.stagedValue"
-         ng-focus="focus()"
-         ng-blur="blur()" />
-</div>
-```
-#### Controller function
-```javascript
-function fdExampleStringFieldCtrl ($scope, $timeout, $element) {
-	
-	$scope.focus = function () {
-		$scope.hasFocus = true;
-		$scope.$emit("sp.spFormField.focus", $element, $scope.inputField);
-	};
-	
-	$scope.blur = function () {
-		$scope.hasFocus = false;
-		$scope.fieldValue($scope.field.stagedValue);
-		$scope.$emit("sp.spFormField.blur", $element, $scope.inputField);
-	};
-	
-	$timeout(function () {
-		$scope.$emit("sp.spFormField.rendered", $element, $scope.inputField);
-	});
-
-}
-```
-#### CSS
-```css
-.fd-ex-string input {
-  box-sizing: border-box;
-  border: 4px solid #C4D0D6;
-  border-radius: 4px;
-  background-color: #F9FDFF;
-  padding: 5px 15px;
-  width: 100%;
-}
-```
+- [fdExampleStringField](/blob/master/examples/fdExampleStringField)
 
 ## Get assistance
 

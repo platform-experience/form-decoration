@@ -8,15 +8,11 @@ This application is designed to easily allow you to style, and add custom functi
 
 ## Why?
 
-The out-of-box form widget in Service Portal is extremely powerful, in that it leverages base-platform functionality (examples below) so that forms can be designed by configuration rather than code.
+The out-of-box form widget in Service Portal is extremely powerful, in that it leverages base-platform functionality so that forms can be designed by configuration rather than code. Some examples of this functionality are form views, UI Policies, and Client Scripts.
 
-- Form views
-- Dictionary 
-- UI Policies
-- Client Scripts
-- UI Actions
+While it's very powerful, it has it's limitations as well. Specifically, there is no out-of-box way to style elements, or to add special functionality (e.g. Google address lookup) to fields/variables on the form. This means that while a portal can look good, it's appearance is often brought down by the inclusion of the form widget on the page which doesn't conform to the styling of the portal.
 
-It also has it's limitations as well. Specifically, there is no out-of-box way to style elements, or to add special functionality (e.g. Google address lookup) to fields/variables on the form. This means that while a portal can look good, it's appearance is often brought down by the inclusion of the form widget on the page which doesn't conform to the styling of the portal.
+Prior to this application, the only way to create your own custom field types and styling was to create your own form within a widget, sacrificing all the base-platform functionality.
 
 ## Installation
 
@@ -46,11 +42,8 @@ The application comes with a Service Portal Page called `df_test` with the widge
 /sp?id=df_test&table=incident
 ```
 
-## Usage
-To create your own field type, simply follow the instructions below.
-
-### 1 - Create a Directive record
-Create a new record in the **Directive** table (`x_snc_formDec_directive`).
+## Creating a custom field type
+To create your own field type, simply create a new record in the **Directive** table (`x_snc_formDec_directive`).
 
 | Field  | Description |
 | ------------- | ------------- |
@@ -75,7 +68,7 @@ When creating your directive, you need to ensure it interacts with the form corr
 
 **NOTE:**  be careful when using [one-time bindings](https://toddmotto.com/angular-one-time-binding-syntax/), as if the field/form changes as a result of UI Policy/Client Script you want these updates to reflect on your field.
 
-### 3 - Define the directive to field/variable relationship
+## Associating a field type with a field/variable
 You must define a relationship between the directive you created and the form field/variable. Doing this will mean that when the field/variable is shown on the form, the directive will be used to display it instead of the out-of-box way of representing it.
 
 If a field does not have this association, the out-of-box method of representing the field will be used.

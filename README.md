@@ -102,7 +102,7 @@ No roles are required to be able to view the form widget or the custom fields.
 ## Example Directives
 Below you can see some examples from the fields that come with the application if you install demo data.
 
-- [fdExampleStringField](examples/fdExampleStringField)
+- [fdExampleStringField](examples/fdExampleStringField.md)
 
 ## Get assistance
 

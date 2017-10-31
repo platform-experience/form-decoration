@@ -1,5 +1,7 @@
 # Form Decoration
 
+**NOTE: This application is currently under active development and is not intended for use at the present time.**
+
 This application is designed to easily allow you to style, and add custom functionality to form fields, whilst retaining the power of the out-of-box form widget.
 
 ![Decorated Form](decorated-form.png)

@@ -1,20 +1,26 @@
 # Form Decoration
 
-**NOTE: This application is currently under active development and is not intended for use at the present time.**
+This ServiceNow application offers added flexibility to the out-of-box form widget in Service Portal, all while retaining it's functionality including respect for form views, UI Policies, and Client Scripts.
 
-This application is designed to easily allow you to style, and add custom functionality to form fields, whilst retaining the power of the out-of-box form widget.
+Some feature highlights of the app:
+
+- Ability to create your own new field types (e.g. "Address lookup").
+	- Apply them to all fields of a certain type, or specific fields on a specific table.
+	- Apply to all portals, or a specific portal.
+- Put UI Actions anywhere on the page, in any widget, and style them in any way you want.
+- Only UI actions, fields, and associated elements are contained in the widget. There's no background colour, or surrounding "frame".
+
+The goal for this application is to be as unopinionated as possible, and allow **you** to control how your form displays.
 
 ![Decorated Form](decorated-form-screenshot.png)
 
-**NOTE:** this repository contains documentation only. The repo containing the applicaton can be found at [platform-experience/form-decoration-app](https://github.com/platform-experience/form-decoration-app).
-
 ## Why?
 
-The out-of-box form widget in Service Portal is extremely powerful, in that it leverages base-platform functionality so that forms can be designed by configuration rather than code. Some examples of this functionality are form views, UI Policies, and Client Scripts.
+The out-of-box form widget in Service Portal is extremely powerful, in that it leverages base-platform functionality so that forms can be designed by configuration rather than code.
 
-While it's very powerful, it has it's limitations as well. Specifically, there is no out-of-box way to style elements, or to add special functionality (e.g. Google address lookup) to fields/variables on the form. This means that while a portal can look good, it's appearance is often brought down by the inclusion of the form widget on the page which doesn't conform to the styling of the portal.
+While it's very powerful, it has it's limitations as well. Specifically, there is no out-of-box way to style elements, or to add special functionality to fields on the form. This means that while a portal can look good, it's appearance is often brought down by the inclusion of the form widget on the page which doesn't conform to the styling of the portal.
 
-Prior to this application, the only way to create your own custom field types and styling was to create your own form within a widget, sacrificing all the base-platform functionality.
+Prior to this application, the only way to create your own custom field types and styling was to create your own form from scratch, sacrificing all the base-platform functionality. This app offers a middle-ground.
 
 ## Installation
 
@@ -23,26 +29,44 @@ To use this application, simply navigate to `System Applications` > `Studio` on 
 ```
 https://github.com/platform-experience/form-decoration-app.git
 ```
-**NOTE:** Executing **Apply Remote Changes** from the **Source Control** menu of ServiceNow Studio will uninstall and reinstall the application, dropping all the tables and thus wiping your configuration data, thus it is suggested not to do this. It is aimed for this application to be published to the ServiceNow Store eventually, which will allow you to receive updates to the app without wiping your data.
+**NOTE:** Executing **Apply Remote Changes** from the **Source Control** menu of ServiceNow Studio will uninstall and reinstall the application, dropping all the tables and thus wiping your configuration data, thus it is suggested not to do this. It is aimed for this application to be published to a ServiceNow repo/the store eventually, which will allow you to receive updates to the app without wiping your data.
 ## Getting Started
-There is a single widget included in this application called **Decorated Form** (`pe-decorated-form`). This widget must be used for the form decoration functionality to work. For instructions on how to add it to a Service Portal page, refer to the [ServiceNow Documentation website](https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/build/service-portal/task/t_AddWidgetsToAPage.html).
+There are two widgets included in this application, with the primary one being **Form (Decorated)** (`pi-decorated-form`). This widget must be used for the form decoration functionality to work. For instructions on how to add it to a Service Portal page, refer to the [ServiceNow Documentation website](https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/build/service-portal/task/t_AddWidgetsToAPage.html).
 
-This widget works similar to the out-of-box form widget, and can be controlled with the following options/parameters:
+The application also comes with a Service Portal Page called `df_test` with the widget already on it. If you open the below URL on your instance you can see it in action.
+
+```
+/sp?id=df_test&table=sys_user
+```
+
+There is another widget called **Form (Decorated) Actions Example** (`pi-df-actions`) which shows an example of how one would use the API to move the UI actions off the form and into another completely different part of the page.
+
+## Understanding
+
+The app works by leveraging the  `template-url` attribute on the out-of-box `spModel` directive. `spModel` is the core directive from which the out-of-box form widget gets it's functionality.
+
+Instead of offering only a finite set of field types (around 20), the template that this app includes offers unlimited types as it's controlled by what is contained in the tables of the application:
+
+- Directive (`x_snc_formdec_directive`) - kind of like a "mini-widget". This is where you create your new field types.
+- Decorator (`x_snc_formdec_decorator`) - This is where you set the criteria for when a Directive will be used for a particular form field.
+
+Note that if there is no Decorator defined for a certain field, the out-of-box way of displaying the field will be used.
+
+
+## Widget Options
+
+The **Form (Decorated)** widget can be controlled with the following options/parameters:
 
 | Option (Label)  | Option (Name)  | URL Parameter | Description | Mandatory | Default |
 | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
 | Table  | `table` | `table` | The table to show | Yes |
 | Sys ID  | `sys_id` | `sys_id` | The Sys ID of the record in the table  | No | `-1` |
 | View  | `view` | `view` | The view to use | No | `service_portal` |
-| Show only primary action  | `primary_only` |  | Whether to only show the primary UI action | No | `false` |
+| Show only primary UI action  | `primary_only` |  | Whether to only show the primary UI action | No | `false` |
+| Show section headings  | `show_headings` |  | Whether to show section headings | No | `true` |
+| Show UI actions  | `show_actions` |  | Whether to only show UI actions at all | No | `true` |
 
-In cases above where a URL parameter can be supplied, supplying an option will override a URL parameter if supplied.
-
-The application comes with a Service Portal Page called `df_test` with the widget already on it. If you open the below URL on your instance you can see it in action.
-
-```
-/sp?id=df_test&table=incident
-```
+If both and option and URL parameter are are supplied, the option will be used.
 
 ## Creating a custom field type
 To create your own field type, simply create a new record in the **Directive** table (`x_snc_formDec_directive`).
@@ -65,26 +89,22 @@ To create your own field type, simply create a new record in the **Directive** t
 When creating your directive, you need to ensure it interacts with the form correctly so that when the form is submitted, the correct value gets sent to the server.
 
 - The value of your field should in most cases be bound to the `field.stagedValue` scope variable.
-- - When the user focuses on the field, you should emit the Angular event `sp.spFormField.focus`.
+- When the user focuses on the field, you should emit the Angular event `sp.spFormField.focus`.
 - When the user is no longer interacting with the field, you should emit the Angular event `sp.spFormField.blur` and pass the stagedValue into the FieldValue scope function (e.g. `$scope.fieldValue($scope.field.stagedValue);`
 
 **NOTE:**  be careful when using [one-time bindings](https://toddmotto.com/angular-one-time-binding-syntax/), as if the field/form changes as a result of UI Policy/Client Script you want these updates to reflect on your field.
 
-## Associating a field type with a field/variable
-You must define a relationship between the directive you created and the form field/variable. Doing this will mean that when the field/variable is shown on the form, the directive will be used to display it instead of the out-of-box way of representing it.
-
-If a field does not have this association, the out-of-box method of representing the field will be used.
-
-You can define the relationship using the **Decorators** table (`x_snc_formdec_decorator`).
+## Defining when the new field type will be used
+You must define a directive record which controlls when the field type will be used. You can do this within the  **Decorators** table (`x_snc_formdec_decorator`).
 
 | Field  | Description |
 | ------------- | ------------- |
 | Directive  | A reference to the directive record created in step 2. |
 | Portal  | The portal where this relationship should apply. |
+| Applies to  | Whether the decorator applies to a field type, or a specific field. |
+| Field Type | The field for which the directive should be used. |
 | Field  | The field for which the directive should be used. |
-| Variable  | The variable for which the directive should be used. |
 
-You can link a single **Decorator** record to both a field AND variable if desired.
 ## Security
 The application has 4 roles which can be granted to users to allow them to configure the application.
 
@@ -102,9 +122,19 @@ No roles are required to be able to view the form widget or the custom fields.
 - [Styling](styling.md)
 
 ## Example Directives
-Below you can see some examples from the fields that come with the application if you install demo data.
+The application comes with 9 Directive records in it's demo data which you can use as inspiration for your own custom fields:
 
 - [fdExampleStringField](examples/fdExampleStringField.md)
+- fdExampleCheckboxField
+- fdExampleChoiceField
+- fdExampleEmailField
+- fdExamplePasswordField
+- fdExamplePhoneField
+- fdExamplePhotoField
+- fdExampleRefField
+- fdExampleYesNoField
+
+There are also 9 Decorator records which will ensure that these field types are used for the `sys_user` table.
 
 ## Get assistance
 
